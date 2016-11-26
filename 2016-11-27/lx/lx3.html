@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<script type="text/javascript">
+		var str = '2016-11---------11';
+		var re = /(\d+)(\D+)/g
+		var n = -1;
+		var arr = ['年','月','日']
+		str = str.replace(re,function($0,$1,$2){
+			n++
+			return $1+arr[n]
+		})
+		if (n==1) {
+			str = str+'日'
+		}
+		alert(str)
+	</script>
+</body>
+</html>

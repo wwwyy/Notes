@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<script type="text/javascript">
+		var str = '2222ddddddffffffeeeeeeeeeeeeeeeee';
+		var re = /(\w)\1+/g
+		var index = 0;
+		var value = '';
+		str.replace(re,function($0,$1){
+			if (index<$0.length) {
+				index = $0.length
+				value = $1
+			}
+		})
+		alert('最多的是'+value+'有'+index+'位')
+	</script>
+</body>
+</html>

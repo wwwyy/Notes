@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+
+	<input type="text"  name=""> <input type="button" value="ok" name=""> <br>
+	<input type="text" name=""> <input type="button" value="ok" name=""> <br>
+	<input type="text" name=""> <input type="button" value="ok" name=""> <br>
+	<script type="text/javascript" src = 'public.js'></script>
+	<script type="text/javascript">
+		(function(d){
+			var input = d.querySelectorAll('input[type="text"]')
+			var btn = d.querySelectorAll('input[type="button"]')
+			btn[0].onclick = function(){
+				if (input[0].value != '') {
+					var re = new RegExp(jsonRe.cn);
+					if (test(input[0].value,re)) {
+						alert('OK')
+					} else {
+						alert('请输入中文')
+					}
+				}
+			}
+			btn[1].onclick = function(){
+				if (input[1].value != '') {
+					var re = new RegExp(jsonRe.Email);
+					if (test(input[1].value,re)) {
+						alert('OK')
+					} else {
+						alert('请输入正确邮箱地址')
+					}
+				}
+			}
+			btn[2].onclick = function(){
+				if (input[2].value != '') {
+					var re = new RegExp(jsonRe.phone);
+					console.log(re)
+					if (test(input[2].value,re)) {
+						alert('OK')
+					} else {
+						alert('请输入正确手机号')
+					}
+				}
+			}
+			function test(a,b){
+				return b.test(a)
+			}
+		})(document)
+	</script>
+</body>
+</html>
