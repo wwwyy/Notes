@@ -16,8 +16,8 @@
 			var btn = d.querySelectorAll('input[type="button"]')
 			btn[0].onclick = function(){
 				if (input[0].value != '') {
-					var re = new RegExp(jsonRe.cn);
-					if (test(input[0].value,re)) {
+					var re = new RegExp('^'+jsonRe.cn+'+$','g');
+					if (re.test(input[0].value)) {
 						alert('OK')
 					} else {
 						alert('请输入中文')
@@ -26,8 +26,8 @@
 			}
 			btn[1].onclick = function(){
 				if (input[1].value != '') {
-					var re = new RegExp(jsonRe.Email);
-					if (test(input[1].value,re)) {
+					var re = new RegExp(jsonRe.Email,'g');
+					if (re.test(input[1].value)) {
 						alert('OK')
 					} else {
 						alert('请输入正确邮箱地址')
