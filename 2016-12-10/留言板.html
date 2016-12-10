@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>留言板</title>
+	<style type="text/css">
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		h2 {
+			height: 50px;
+			color: #f06292;
+			font: 30px/50px '微软雅黑';
+			text-align: center;
+			background: rgba(178,223,219,.7);
+			border-radius: 25px;
+			position: relative;
+		}
+		section {
+			width: 500px;
+			margin: 50px auto;
+		}
+		ul {
+			margin-top: 10px;
+			list-style: none;
+			width: 500px;
+			height:  400px;
+			border: 2px solid #e0e0e0;
+			padding: 4px;
+			overflow: auto;
+			box-sizing: border-box;
+		}
+		li {
+			margin: 5px 0;
+			height: 40px;
+			background: #eee;
+			font: 18px/40px 'simsun',Monaco;
+			color: skyblue;
+			text-indent: 2em;
+		}
+		#mess {
+			margin-top: 5px;
+		}
+		textarea {
+			float: left;
+			display: inline-block;
+			width: 80%;
+			height: 60px;
+			resize: none;
+			outline: none;
+			box-sizing: border-box;
+			padding: 10px;
+		}
+		input {
+			float: right;
+			display: inline-block;
+			-webkit-appearance: none;
+			width: 18%;
+			outline: none;
+			height: 60px;
+			font:30px/60px "simsun";
+		}
+		li a {
+			display: none;
+			text-decoration: none;
+			float: right;
+			text-indent: 0;
+			margin-right: 1em;
+			font-size: 14px;
+			line-height: 40px;
+			color: #00b0ff;
+		}
+		li a:nth-of-type(1) {
+			color: #212121;
+		}
+	</style>
+</head>
+<body>
+	<section>
+		<h2>留言板</h2>
+		<ul id="ul">
+		</ul>
+		<div id="mess">
+			<textarea id="text"></textarea>
+			<input type="button" value="发送" id="btn" name="">
+		</div>
+	</section>
+<script type="text/javascript" src='jquery-3.1.1.min.js'></script>
+<script type="text/javascript">
+	$(function(){
+		var t1 = new Message();
+		t1.init()
+		
+	})
+	function Message(){
+		this.$text = $('#text');
+		this.$ul = $('#ul');
+		this.$btn = $('#btn');
+		this.$lis = $('li');
+		this.color = ['#ffcdd2','#e1bee7','#bbdefb','#b2dfdb','#ffccbc']
+	}
+	Message.prototype.init = function(){
+		this.fnBtn();
+	};
+	Message.prototype.fnBtn = function(){
+		var _this = this;
+		this.$btn.click(function(){
+			if (_this.$text.val()!='') {
+				_this.$ul.append($('<Li>'+_this.$text.val()+'<a href="javascript:;" class="del">删除</a><a href="javascript:;" class="num">第'+(_this.$ul.children().length+1)+'条留言</a></li>'))
+				$('li').each(function(i,e){
+					$(e).css('background',_this.color[i%5])
+				})
+				$('.del').bind('click',function(){
+					$(this).parent().remove();
+					$('.num').each(function(i,e){
+						$(e).html('第'+(i+1)+'条留言')
+					})
+				})
+				_this.$text.val('')
+				_this.fnShow();
+			} else {
+				alert("请输入内容")
+			}
+		})
+	};
+	Message.prototype.fnShow = function(){
+		
+		$('li').on('mouseover',function(){
+			$(this).children('a').show()
+		})
+		$('li').unbind('click').bind('click',function(){
+			if ($(this).children('.del').attr('show')!='on') {
+				$(this).children().show();
+				$(this).children('.del').attr('show','on')
+			} else {
+				$(this).children().hide();
+				$(this).children('.del').attr('show','off');
+			}
+			return false
+		})
+		$('li').on('mouseout',function(){
+			if ($(this).children('.del').attr('show')!='on') {
+				$(this).children().hide()
+			}
+		})
+	};
+</script>
+</body>
+</html>
