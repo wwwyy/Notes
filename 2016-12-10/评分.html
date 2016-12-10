@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>百度评分</title>
+	<style type="text/css">
+		#div1 {
+			width: 110px;
+			height: 24px;
+			padding: 5px;
+			margin: 150px auto;
+		}
+		a {
+			float: left;
+			width: 20px;
+			height: 22px;
+			margin-right: 2px;
+			text-decoration: none;
+			background: url(img/star1.png) no-repeat 0 0;
+
+		}
+	</style>
+</head>
+<body>
+	<div id="div1">
+		<a href="javascript:;"></a>
+		<a href="javascript:;"></a>
+		<a href="javascript:;"></a>
+		<a href="javascript:;"></a>
+		<a href="javascript:;"></a>
+	</div>
+<script type="text/javascript" src='jquery-3.1.1.min.js'></script>
+<script type="text/javascript">
+	$(function(){
+		var url1 = 'url(img/star1.png) no-repeat 0 0';
+		var url2 = 'url(img/star2.png) no-repeat 0 0';
+		var url3 = 'url(img/star3.png) no-repeat 0 0';
+		var index = -1;
+		$('a').on('mouseover',function(){
+			$('a').css('background',url1)
+			if ($(this).index()<2) {
+				$('a').slice(0,$(this).index()+1).css('background',url3)
+			} else {
+				$('a').slice(0,$(this).index()+1).css('background',url2)
+			}
+		})
+		$('a').click(function(){
+			index = $(this).index()
+		})
+		$('a').on('mouseout',function(){
+			if ($(this).index()<=index) {
+				if (index<2) {
+					$('a').slice(0,index+1).css('background',url3)
+				} else {
+					$('a').slice(0,index+1).css('background',url2)
+				}
+			} else {
+				if (index<2) {
+					$('a').slice(0,index+1).css('background',url3)
+				}
+				$('a').slice(index+1,$('a').length).css('background',url1)
+			}
+		})
+	})
+</script>
+</body>
+</html>
