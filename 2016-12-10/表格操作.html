@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>表格操作</title>
+		<style>
+			*{
+				font-family: "微软雅黑";
+				color: #333;
+			}
+			#form{
+				text-align: center;
+				
+			}
+			#txt{width: 486px;margin:5px auto;text-align: left;}
+			#txt span{																
+				display: inline-block;
+				font-family: "微软雅黑";
+				font-size: 14px;
+				color: #333;
+			}
+			#txt span:nth-of-type(1){
+				width:156px;
+				height:20px;
+			}
+			#txt span:nth-of-type(2){
+				width:120px;
+				height:20px;
+			}
+		    #box{
+		    	margin: 120px auto;
+		    	width: 600px;
+		    }
+			.c1{
+				background: skyblue;
+			}
+			.c2{
+				background: #fff;
+			}
+			.c3{
+				background: #00BFFF;
+			}
+			.c4{
+				background: #00BFFF;
+				color: #fff;
+			}
+			.c5{
+				background:pink;
+				color: #fff;
+			}
+			table {
+				border: 1px solid #000;
+				border-right:0;
+				border-bottom: none;
+			}
+			table thead th,table tbody td{
+				text-align: center;
+				line-height:25px;
+				border-right:1px solid #000;
+			}
+			table thead th,table tbody td{
+				border-bottom: 1px solid #000;
+			}
+			.sortmode{
+				width: 100px;
+				height: 25px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="box">
+			<div id="top">
+				<div id="txt">
+				    <span>请输入姓名</span>
+				    <span>请选择性别</span>
+				    <span>请输入年龄</span>
+				</div>
+				<div id="form">
+				<form id="form1">
+				    <input type="text" name="username" placeholder="姓名" />
+				    <select name="sex">
+				        <!--<option value="">请选择一个性别</option>-->
+				        <option value="男">男</option>
+				        <option value="女">女</option>
+				    </select>
+				    <input type="text" name="age" placeholder="年龄"/>
+				    <input type="button" name="btn" value="提交">
+				</form>
+				<p>
+				    <form id="form2">
+				    	<span>请选择编号：</span>
+				        <select name="orderName" class="sortmode">
+				            <option value="id" >编号</option>
+				            <option value="age">年龄</option>
+				        </select>
+				        <span>请选择排序方式：</span>
+				        <select name="orderBy" class="sortmode">
+				            <option value="asc">升序</option>
+				            <option value="desc">降序</option>
+				        </select>
+				        <input type="button" name="orderButton" value="排序">
+				      <input type="button" name="delMore" value="批量删除">  
+				    </form>
+				</p>
+				</div>
+			</div>
+			<table width="100%" id="tab1" border="0" cellspacing="0" >
+			    <thead>
+				    <tr>
+				        <th>全选 <input type="checkbox" id="checkAll"></th>
+				        <th>编号</th>
+				        <th>姓名</th>
+				        <th>性别</th>
+				        <th>年龄</th>
+				        <th>操作</th>
+				    </tr>
+			    </thead>
+			    <tbody id="tbody">
+			    	<!-- <tr>
+			    		<td><input type="checkbox" class="check"></td>
+			    		<td>1</td>
+			    		<td>大红</td>
+			    		<td>女</td>
+			    		<td>23</td>
+			    		<td>
+			    			<input type="button" class="toPrev" value="上移"/>
+			    			<input type="button" class="toNext" value="下移" />
+			    			<input type="button" class="del" value="删除"/>
+			    		</td>
+			    	</tr> -->
+			    </tbody>
+			</table>
+		</div>
+	</body>
+<script type="text/javascript" src="jquery-3.1.1.min.js" ></script>
+<script type="text/javascript">
+	$(function(){
+		var data = [
+	        {
+	             'id' : 1,
+	            'username' : 'LEO',
+	            'age' : 36,
+	            'sex' : '男'
+	        },
+	        {
+	            'id' : 2,
+	            'username' : 'MOMO',
+	            'age' : 16,
+	            'sex' : '男'
+	        },
+	        {
+	            'id' : 3,
+	            'username' : 'DUODUO',
+	            'age' : 29,
+	            'sex' : '男'
+	        },
+	        {
+	            'id' : 4,
+	            'username' : '勇升',
+	            'age' : 46,
+	            'sex' : '男'
+	        },
+	        {
+	            'id' : 5,
+	            'username' : '小美',
+	            'age' : 40,
+	            'sex' : '女'
+	        }
+        ]
+        var f1 = new Form(data);
+        f1.init()
+	})
+	function Form(data){
+		this.data = data;
+    	this.$btn = $('input[name="btn"]');
+    	this.$userName = $('input[name="username"]');
+    	this.$sex = $('select[name="sex"]');
+    	this.$age = $('input[name="age"]');
+    	this.$orderName = $('select[name="orderName"]');
+    	this.$orderBy = $('select[name="orderBy"]');
+    	this.$orderButton = $('input[name="orderButton"]');
+    	this.$delMore = $('input[name="delMore"]');
+    	this.$checkAll = $('#checkAll')
+    	this.$tbody = $('#tbody')
+
+    }
+    Form.prototype.init = function(){
+    	this.submit();
+    	this.create();
+    	this.del();
+    	this.check();
+    	this.delMore();
+    	this.check();
+    	this.move();
+    	this.order();
+    };
+    Form.prototype.create = function(){
+    	var _this = this;
+    	for (k in _this.data) {
+			if (_this.data[k]) {
+				_this.$tbody[0].innerHTML +='<tr><td><input type="checkbox" class="check"></td><td>'+(_this.data.indexOf(_this.data[k])+1)+'</td><td>'+_this.data[k].username+'</td><td>'+_this.data[k].sex+'</td><td>'+_this.data[k].age+'</td><td><input type="button" class="toPrev" value="上移"/><input type="button" class="toNext" value="下移" /><input type="button" class="del" value="删除"/></td></tr>'
+			}
+		}
+    };
+
+  	Form.prototype.submit = function(argument){
+  		var _this = this;
+  		_this.$btn.click(function(){
+  			if (_this.$userName.val()==''||_this.$age.val()=='') {
+  				alert("请输入内容")
+  				return
+  			}
+  			_this.data.push({
+	  			'id':_this.data.length+1,
+	  			'username':_this.$userName.val(),
+	  			'age':_this.$age.val(),
+	  			'sex':_this.$sex.val()
+  			})
+  			_this.$tbody.html('')
+  			_this.create()
+  			_this.del();
+  			_this.check();
+  			_this.move();
+  			_this.$userName.val('');
+  			_this.$age.val('');
+  		});
+  	};
+
+  	Form.prototype.del = function(){
+  		var _this = this;
+  		$('.del').click(fnDel);
+  		function fnDel(){
+  			_this.data.splice($(this).parent().parent().index(), 1)
+  			_this.$tbody.html('')
+  			_this.$checkAll.prop('checked',false)
+  			for (k in _this.data) {
+  				if (_this.data[k]) {
+  					_this.$tbody[0].innerHTML +='<tr><td><input type="checkbox" class="check"></td><td>'+(_this.data.indexOf(_this.data[k])+1)+'</td><td>'+_this.data[k].username+'</td><td>'+_this.data[k].sex+'</td><td>'+_this.data[k].age+'</td><td><input type="button" class="toPrev" value="上移"/><input type="button" class="toNext" value="下移" /><input type="button" class="del" value="删除"/></td></tr>'
+  					$('.del').bind('click',fnDel);
+  					_this.check();
+  					_this.move();
+  					_this.order()
+  				}
+  			}
+  		}
+  	};
+
+  	Form.prototype.check = function(){
+  		var _this = this;
+  		this.$checkAll.click(function(){
+  			if ($(this).prop('checked')==true) {
+  				$('.check').each(function(i,e){
+	  				if (!$(e).prop('checked')) {
+	  					$('.check').prop('checked',true)
+	  				}
+	  			})
+  			} else {
+  				$('.check').prop('checked',false)
+  			}
+  		})
+  		$('.check').click(function(){
+  			if (_this.$checkAll.prop('checked')) {
+  				_this.$checkAll.prop('checked',false)
+  			}
+  			if($('.check:checked').length==$('.check').length){
+  				_this.$checkAll.prop('checked',true)
+  			}
+  		})
+  	};
+
+  	Form.prototype.delMore = function(){
+  		var _this = this;
+  		var num = [];
+  		this.$delMore.click(function(){
+  			num = [];
+  			_this.$checkAll.prop('checked',false)
+  			$('.check').each(function(i,e){
+	  			if ($(e).prop('checked')==true) {
+	  				num.push($(e).parent().next().html()-1)
+	  			}
+	  		})
+	  		for (var i = 0; i < num.length; i++) {
+	  			_this.data[num[i]] = null;
+	  		}
+	  		for (var i = 0; i < _this.data.length; i++) {
+	  			if (_this.data[i]==null) {
+	  				_this.data.splice(i,1);
+                      i= i-1;
+	  			}
+	  		}
+	  		_this.$tbody.html('')
+	  		for (k in _this.data) {
+  				if (_this.data[k]) {
+  					_this.$tbody[0].innerHTML +='<tr><td><input type="checkbox" class="check"></td><td>'+(_this.data.indexOf(_this.data[k])+1)+'</td><td>'+_this.data[k].username+'</td><td>'+_this.data[k].sex+'</td><td>'+_this.data[k].age+'</td><td><input type="button" class="toPrev" value="上移"/><input type="button" class="toNext" value="下移" /><input type="button" class="del" value="删除"/></td></tr>'
+  					_this.check()
+  					_this.del();
+  					_this.move();
+  					_this.order()
+  				}
+  			}
+  		})
+  	};
+
+  	Form.prototype.move = function(){
+  		var _this = this;
+  		$('.toPrev').click(function(){
+  			var cont = null;
+  			if ($(this).parent().parent().prev().length!=0) {
+  				cont = _this.data[$(this).parent().parent().index()]
+  				_this.data[$(this).parent().parent().index()] = _this.data[$(this).parent().parent().index()-1];
+  				_this.data[$(this).parent().parent().index()-1] = cont;
+  			} else {
+  				cont = _this.data[$(this).parent().parent().index()]
+  				_this.data.splice($(this).parent().parent().index(), 1)
+  				_this.data.push(cont)
+  			}
+  			fnCreate()
+  		})
+  		$('.toNext').click(function(){
+  			var cont = null;
+  			if ($(this).parent().parent().next().length!=0) {
+  				cont = _this.data[$(this).parent().parent().index()]
+  				_this.data[$(this).parent().parent().index()] = _this.data[$(this).parent().parent().index()+1];
+  				_this.data[$(this).parent().parent().index()+1] = cont;
+  			} else {
+  				cont = _this.data[$(this).parent().parent().index()]
+  				_this.data.splice($(this).parent().parent().index(), 1)
+  				_this.data.unshift(cont)
+  			}
+  			fnCreate()
+  		})
+  		function fnCreate(){
+  			_this.$tbody.html('')
+  			for (k in _this.data) {
+  				if (_this.data[k]) {
+  					_this.$tbody[0].innerHTML +='<tr><td><input type="checkbox" class="check"></td><td>'+_this.data[k].id+'</td><td>'+_this.data[k].username+'</td><td>'+_this.data[k].sex+'</td><td>'+_this.data[k].age+'</td><td><input type="button" class="toPrev" value="上移"/><input type="button" class="toNext" value="下移" /><input type="button" class="del" value="删除"/></td></tr>'
+  					_this.check()
+  					_this.del()
+  					_this.move();
+  					_this.order()
+  				}
+  			}
+  		}
+  	};
+  	
+  	Form.prototype.order = function(){
+  		var _this = this;
+  		this.$orderButton.click(function(){
+  			if (_this.$orderName.val()=='id') {
+  				var arrName = [];
+  				if (_this.$orderBy.val()=='asc') {
+  					for (var i = 0; i < _this.data.length; i++) {
+	  					for (k in _this.data) {
+	  						if (_this.data[k].id==(i+1)) {
+	  							arrName.push(_this.data[k])
+	  						}
+	  					}
+	  				}
+  				} else {
+  					for (var i = 0; i < _this.data.length; i++) {
+	  					for (k in _this.data) {
+	  						if (_this.data[k].id==(i+1)) {
+	  							arrName.unshift(_this.data[k])
+	  						}
+	  					}
+	  				}
+  				}
+  				_this.data = arrName;
+  			} else {
+  				var arrAge1 = [];
+  				var arrAge2 = [];
+  				var arrAge3 = [];
+  				if (_this.$orderBy.val() =='asc') {
+  					for (var i = 0; i < _this.data.length; i++) {
+	  					arrAge1.push(parseInt(_this.data[i].age))
+	  				}
+	  				arrAge1.sort(function(a,b){
+						return a - b;
+					})
+	  				for (var i = 0; i < arrAge1.length; i++) {
+	  					for (k in _this.data) {
+	  						if (_this.data[k].age==arrAge1[i]) {
+	  							arrAge2.push(_this.data.indexOf(_this.data[k]))
+	  						}
+	  					}
+	  				}
+	  				for (var i = 0; i < arrAge2.length; i++) {
+	  					arrAge3.push(_this.data[arrAge2[i]])
+	  				}
+  				} else {
+  					for (var i = 0; i < _this.data.length; i++) {
+	  					arrAge1.push(parseInt(_this.data[i].age))
+	  				}
+	  				arrAge1.sort(function(a,b){
+						return a - b;
+					})
+	  				for (var i = 0; i < arrAge1.length; i++) {
+	  					for (k in _this.data) {
+	  						if (_this.data[k].age==arrAge1[i]) {
+	  							arrAge2.unshift(_this.data.indexOf(_this.data[k]))
+	  						}
+	  					}
+	  				}
+	  				for (var i = 0; i < arrAge2.length; i++) {
+	  					arrAge3.push(_this.data[arrAge2[i]])
+	  				}
+  				}
+  				_this.data = arrAge3;
+  			}
+
+  			fnCreate()
+  		})
+  		function fnCreate(){
+  			_this.$tbody.html('')
+  			for (k in _this.data) {
+  				if (_this.data[k]) {
+  					_this.$tbody[0].innerHTML +='<tr><td><input type="checkbox" class="check"></td><td>'+_this.data[k].id+'</td><td>'+_this.data[k].username+'</td><td>'+_this.data[k].sex+'</td><td>'+_this.data[k].age+'</td><td><input type="button" class="toPrev" value="上移"/><input type="button" class="toNext" value="下移" /><input type="button" class="del" value="删除"/></td></tr>'
+  					_this.check()
+  					_this.del()
+  					_this.move()
+  				}
+  			}
+  		}
+  	};
+</script>
+</html>

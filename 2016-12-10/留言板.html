@@ -33,11 +33,11 @@
 		}
 		li {
 			margin: 5px 0;
-			height: 40px;
 			background: #eee;
 			font: 18px/40px 'simsun',Monaco;
 			color: skyblue;
 			text-indent: 2em;
+			word-wrap: break-word;
 		}
 		#mess {
 			margin-top: 5px;
@@ -111,11 +111,17 @@
 				$('li').each(function(i,e){
 					$(e).css('background',_this.color[i%5])
 				})
+				$('#ul').scrollTop(($('#ul').scrollTop()+$('li').last().outerHeight(true)))
 				$('.del').bind('click',function(){
-					$(this).parent().remove();
-					$('.num').each(function(i,e){
-						$(e).html('第'+(i+1)+'条留言')
-					})
+					var This = this;
+					$(this).parent().animate({
+						height:0
+					}, 600,function(){
+						$(This).parent().remove();
+						$('.num').each(function(i,e){
+							$(e).html('第'+(i+1)+'条留言')
+						})
+					});
 				})
 				_this.$text.val('')
 				_this.fnShow();

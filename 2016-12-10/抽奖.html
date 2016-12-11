@@ -126,7 +126,8 @@
 		var timer3 = 0;
 		var rTime = 2000;
 		this.$btn.click(function(){
-			rTime = 2000;
+			_this.num = 0;
+			rTime = 1600;
 			rTime = rTime+(parseInt(Math.random()*10)*300)
 			clearInterval(timer1);
 			clearInterval(timer2);
@@ -138,7 +139,7 @@
 				})
 				_this.$lis.eq(_this.num).css('background','#eee')
 				_this.num++;
-				if (_this.num>_this.$lis.length) {
+				if (_this.num>=_this.$lis.length) {
 					_this.num=0;
 				}
 			},100)
@@ -147,17 +148,20 @@
 				_this.time = 0;
 				timer2 = setInterval(function(){
 					_this.time = _this.time+500;
+					$('li').each(function(i,e){
+						$(e).css('background',arr[i])
+					})
+					_this.$lis.eq(_this.num).css('background','#eee');
 					if (_this.time>1000) {
 						clearInterval(timer2)
 						_this.time = 0;
 						rTime = 2000;
 						_this.win(_this.$lis.eq(_this.num).html())
 					}
-					$('li').each(function(i,e){
-						$(e).css('background',arr[i])
-					})
-					_this.$lis.eq(_this.num).css('background','#eee');
 					_this.num++;
+					if (_this.num>=_this.$lis.length) {
+						_this.num = 0;
+					}
 				},500)
 			},rTime)
 		})
