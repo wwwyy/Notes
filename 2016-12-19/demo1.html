@@ -11,36 +11,36 @@
 		this.txt = document.getElementById('tijiaoText')
 	}
 	CreateDate.prototype = {
-		constructor:CreateDate,
-		init:function(obj,event){
-			var _this = this;
-			obj.onclick = function(){
-				_this.Event(obj);
+		constructor:CreateDate, //修改原型指向
+		init:function(obj,event){ //函数初始化
+			var _this = this; 
+			obj.onclick = function(){ 
+				_this.Event(obj); //当点击是调用Event函数
 			}
-			this.loaded(1)
+			this.loaded(1) // 打开网页默认显示留言板第一页
 		},
-		Event:function(){
+		Event:function(){ // 点击后执行的操作
 			var _this = this;
-			var val = _this.txt.value.trim();
-			if (val) {
-				ajax({
-					url:'weibo.php',
-					data:{
-						act:'add',
-						content:val
+			var val = _this.txt.value.trim(); //去掉输入内容的前后空格|trim()|
+			if (val) { // 判断输入框的内容是否为空,不为空执行下面操作
+				ajax({ // 执行ajax
+					url:'weibo.php', //php文件地址,
+					data:{ // 跟后端对接的接口内容写在这里面
+						act:'add', //act:add act是接口,add是后台规定的接口名称,根据这个后端判断该执行什么操作 add是添加借口
+						content:val // 把输入框的内容传到后端,这些都是后端规定好的,前面的属性名照着后端给的表写就行
 					},
-					succ:function(json){
-						if (!json.error) {
-							_this.loaded(1)
-							_this.txt.value = ''
+					succ:function(json){ // 发送成功后执行的操作
+						if (!json.error) { // 如果没有报错,继续执行
+							_this.loaded(1) // 执行loaded函数,
+							_this.txt.value = '' // 清空输入框内容
 						}
 					}
 				})
-			} else {
+			} else { // 为空弹出警告
 				alert('1')
 			}
 		},
-		cDiv:function(val,time){
+		cDiv:function(val,time){ // 创建div的函数,就是添加的时候都需要重新渲染一遍,就得重新生成一遍
 			var div = document.createElement('div');
 			div.className = 'replay';
 			div.innerHTML =`<p class="replyContent">${val}</p>
@@ -54,9 +54,9 @@
                 </p>`;
             return div;
 		},
-		cDate:function(time){
-			var str = '';
-			var t = new Date(time*1000);
+		cDate:function(time){ //这个time是从后端获取过来的
+			var str = '';  
+			var t = new Date(time*1000); // 后端的时间是秒,前端的时间是毫秒,把后端的时间转成毫秒
 			var y = t.getFullYear();
 			var mon = t.getMonth()+1;
 			var day = t.getDate();
@@ -64,33 +64,34 @@
 			var min = t.getMinutes();
 			var sen = t.getSeconds()
 
-			str = y+'-'+this.toDou(mon)+'-'+this.toDou(day)+' '+this.toDou(H)+':'+this.toDou(min)+':'+this.toDou(sen);
-			return str;
+			str = y+'-'+this.toDou(mon)+'-'+this.toDou(day)+' '+this.toDou(H)+':'+this.toDou(min)+':'+this.toDou(sen); //处理时间,补零加格式拼接
+			return str; // 函数返回值为拼好的字符串str
 		},
-		toDou:function(n){
+		toDou:function(n){ // 补零函数
 			return n<10?'0'+n:''+n;
 		},
-		loaded:function(n){
+		loaded:function(n){ // 这个是从后端获取当前页面的内容
 			var _this = this;
-			ajax({
+			ajax({ 
 				url:'weibo.php',
 				data:{
 					act:'get',
-					page:n
+					page:n // 当前是第几页,就向后端打申请,说需要爸爸需要第几页的内容,儿子快给我
 				},
-				succ:function(arr){
-					_this.box.innerHTML = '';
-					arr.forEach(function(e,i){
-						var div = _this.cDiv(e.content,_this.cDate(e.time));
-						_this.box.appendChild(div)
+				succ:function(arr){ //请求成功后把后端发给爸爸我的数据取回来了
+					//这里注意,智鹏写的ajax函数已经把返回的内容处理过了,如果不用智鹏的ajax函数,默认这里返回的看起来是数组,其实是个字符串,需要自己再处理
+					_this.box.innerHTML = ''; //先清空box,然后再生成
+					arr.forEach(function(e,i){ //循环生成每一项,调用刚才创建div的函数cDiv就好
+						var div = _this.cDiv(e.content,_this.cDate(e.time));  //这里的this.cDate()就是刚才的处理时间的函数,数组中的每一个对象里都有time这个属性,这个e.time就是每个对象里的time的值
+						_this.box.appendChild(div) //然后每生成一个div就往box里扔一个
 					})
 				}
 			})
 		}
 	}
-	var c1 = new CreateDate();
+	var c1 = new CreateDate(); //创建c1
 	var btn1 = document.getElementById('btn1');
-	c1.init(btn1);
+	c1.init(btn1); //btn1 的点击事件
 	c1.txt.onkeydown = function(ev){
 		if (ev.keyCode===13 && ev.ctrlKey) {
 			c1.Event()
